@@ -29,6 +29,13 @@ public class SecondFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //Code pour pouvoir modifier dynamiquement la barre de progression
+        View rectangleView = binding.rectangleView;
+        ViewGroup.LayoutParams params = rectangleView.getLayoutParams();
+        params.width = 20;   // largeur en pixels
+        params.height = 1250;  // hauteur en pixels
+        rectangleView.setLayoutParams(params);
+
         binding.buttonSecond.setOnClickListener(v ->
                 NavHostFragment.findNavController(SecondFragment.this)
                         .navigate(R.id.action_SecondFragment_to_FirstFragment)
