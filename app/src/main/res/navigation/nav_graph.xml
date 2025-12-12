@@ -17,12 +17,17 @@
         <action
             android:id="@+id/action_FirstFragment_to_GameFragment"
             app:destination="@id/FragmentTest_game" />
+
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
         android:name="com.example.ecohouse.SecondFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_second">
+
+        <action
+            android:id="@+id/action_FirstFragment_to_GameOverFragment"
+            app:destination="@id/Fragment_gameover" />
 
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
@@ -34,5 +39,12 @@
         android:name="com.example.ecohouse.GameFragment"
         android:label="test game fragment"
         tools:layout="@layout/fragment_game">
+    </fragment>
+
+    <fragment
+        android:id="@+id/Fragment_gameover"
+        android:name="com.example.ecohouse.GameOverFragment"
+        android:label="game over fragment"
+        tools:layout="@layout/fragment_gameover">
     </fragment>
 </navigation>
