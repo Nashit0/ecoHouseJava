@@ -21,23 +21,96 @@
 
     android:background="@drawable/background_game_rectangle"
     >
-    <ImageView
-        android:id="@+id/tutorial"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:src="@drawable/tutorial"
-        android:layout_gravity="center"
-        />
+
 
     <!-- tenter de mettre ça dans un layout constraint pour pouvoir replacer les elements dedans en mode custom ? -->
-    <ImageView
-        android:id="@+id/house"
-        android:layout_width="425dp"
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/tutorial_screen"
+        android:layout_width="200dp"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:scaleType="fitCenter"
-        android:src="@drawable/house_bg" />
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <ImageView
+            android:id="@+id/tutorial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/tutorial" />
+
+        <ImageButton
+            android:id="@+id/play_button"
+            android:layout_width="match_parent"
+            android:layout_height="59dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Encadré"
+            android:scaleType="fitCenter"
+            android:src="@drawable/button_states"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/game_elements"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/game_elements_bg"
+        >
+
+        <ImageButton
+            android:id="@+id/light_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="switch lumière"
+            android:scaleType="fitCenter"
+            android:src="@drawable/light_switch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="400dp"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/house"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"
+            android:src="@drawable/house_bg" />
+
+        <ImageView
+            android:id="@+id/light_overlay"
+            android:layout_width="225dp"
+            android:layout_height="179dp"
+            android:layout_gravity="bottom|right"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/livingroom_1"
+            android:visibility="invisible"
+            />
+    </FrameLayout>
+
 
 </LinearLayout>
 
