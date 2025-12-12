@@ -38,7 +38,7 @@
             android:id="@+id/rectangleView"
             android:layout_width="19dp"
             android:layout_height="4dp"
-            android:background="@drawable/rectangle"
+            android:background="@drawable/game_elements_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

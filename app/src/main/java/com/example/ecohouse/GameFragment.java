@@ -15,6 +15,7 @@ import com.example.ecohouse.databinding.FragmentGameBinding;
 public class GameFragment extends Fragment {
 
     private FragmentGameBinding binding ;
+    private boolean isLightOn = false;
 
 
     @Override
@@ -27,11 +28,35 @@ public class GameFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        binding.playButton.setOnClickListener(v->{
+                    binding.tutorialScreen.setVisibility(View.GONE) ;
+                    binding.gameElements.setVisibility(View.VISIBLE) ;
+                });
+
+        binding.lightSwitch.setSelected(isLightOn);
+        binding.lightSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleLight();
+            }
+        });
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void toggleLight() {
+        isLightOn = !isLightOn;
+        if (isLightOn) {
+            binding.lightOverlay.setVisibility(View.VISIBLE); // style.visibility = 'hidden'
+            binding.lightSwitch.setSelected(true);
+        } else {
+            // Allumer
+            binding.lightOverlay.setVisibility(View.INVISIBLE); // style.visibility = 'visible'
+            binding.lightSwitch.setSelected(false);
+        }
     }
 }
