@@ -14,12 +14,14 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.ecohouse.databinding.FragmentSecondBinding;
 
 public class SecondFragment extends Fragment {
-    public Integer badPoints = 500;
-    public final Integer maxBadPoints = 1200;
-    public Integer score = 20;
-    private FragmentSecondBinding binding;
+    private static Integer badPoints;
+    private final Integer maxBadPoints = 1200;
+    private static Integer score;
+    private static Integer highScore = 0;
+    private static FragmentSecondBinding binding;
 
-    private int secondsElapsed = 0;
+    private static int secondsElapsed = 0;
+    private static int bestTime = 0;
     private Handler handler = new Handler();
     private Runnable timerRunnable;
 
@@ -28,6 +30,9 @@ public class SecondFragment extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
+        badPoints = 900;
+        score = 0;
+        secondsElapsed = 0;
         binding = FragmentSecondBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -48,7 +53,7 @@ public class SecondFragment extends Fragment {
                 if (badPoints > maxBadPoints) {
                     Log.d("TEST_projet", "Echec");
                     NavHostFragment.findNavController(SecondFragment.this)
-                            .navigate(R.id.action_FirstFragment_to_GameOverFragment);
+                            .navigate(R.id.action_SecondFragment_to_GameOverFragment);
                     //NOTE POUR MOI -> changer ^ pour que ça se connect bien au gameover
                 }
 
@@ -91,5 +96,37 @@ public class SecondFragment extends Fragment {
         params.width = (badPoints * parentWidth) / maxBadPoints;
         params.height = 20;
         rectangleView.setLayoutParams(params);
+    }
+
+
+
+    //GETTER & SETTER
+
+    public static Integer getScore() {
+        return score;
+    }
+    public static void setScore(Integer newScore) {
+        score = newScore;
+    }
+
+    public static Integer getHighScore() {
+        return highScore;
+    }
+    public static void setHighScore(Integer newScore) {
+        highScore = newScore;
+    }
+
+    public static Integer getSeconds() {
+        return secondsElapsed;
+    }
+
+    public static void setSeconds(Integer newS) {
+        secondsElapsed = newS;
+    }
+    public static Integer getBestTime() {
+        return bestTime;
+    }
+    public static void setBestTime(Integer newS) {
+        bestTime = newS;
     }
 }

@@ -25,13 +25,13 @@
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_second">
 
-        <action
-            android:id="@+id/action_FirstFragment_to_GameOverFragment"
-            app:destination="@id/Fragment_gameover" />
 
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />
+        <action
+            android:id="@+id/action_SecondFragment_to_GameOverFragment"
+            app:destination="@id/Fragment_gameover" />
     </fragment>
 
     <fragment
@@ -46,5 +46,15 @@
         android:name="com.example.ecohouse.GameOverFragment"
         android:label="game over fragment"
         tools:layout="@layout/fragment_gameover">
+
+        <action
+            android:id="@+id/action_GameOverFragment_to_SecondFragment"
+            app:destination="@+id/SecondFragment"
+            />
+        <action
+            android:id="@+id/action_GameOverFragment_to_GameFragment"
+            app:destination="@+id/FragmentTest_game"
+            />
     </fragment>
+
 </navigation>
