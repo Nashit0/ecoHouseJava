@@ -36,7 +36,7 @@
 
     <fragment
         android:id="@+id/FragmentTest_game"
-        android:name="com.example.ecohouse.GameFragment"
+        android:name="com.example.ecohouse.view.GameFragment"
         android:label="test game fragment"
         tools:layout="@layout/fragment_game">
     </fragment>

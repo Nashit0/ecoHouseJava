@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GameFragment"
-    android:background="#FF0000"
+    tools:context=".view.GameFragment"
     >
 
 <LinearLayout
@@ -22,8 +21,6 @@
     android:background="@drawable/background_game_rectangle"
     >
 
-
-    <!-- tenter de mettre ça dans un layout constraint pour pouvoir replacer les elements dedans en mode custom ? -->
     <LinearLayout
         android:visibility="gone"
         android:id="@+id/tutorial_screen"
@@ -64,7 +61,8 @@
         android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_marginEnd="16dp"
-        android:gravity="center"
+        android:gravity="top"
+        android:padding="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,15 +70,60 @@
         app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/game_elements_bg"
         >
-
-        <ImageButton
-            android:id="@+id/light_switch"
+        <LinearLayout
+            android:gravity="top|center"
             android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/light_switch1"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="switch lumière"
+                android:scaleType="fitCenter"
+                android:src="@drawable/light_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/light_switch_2"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="switch lumière"
+                android:scaleType="fitCenter"
+                android:src="@drawable/light_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/light_switch_3"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="switch lumière"
+                android:scaleType="fitCenter"
+                android:src="@drawable/light_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/robinet"
+            android:padding="24dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="switch lumière"
+            android:contentDescription="Encadré"
             android:scaleType="fitCenter"
-            android:src="@drawable/light_switch"
+            android:src="@drawable/faucet"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -100,14 +143,33 @@
 
         <ImageView
             android:id="@+id/light_overlay"
+            android:layout_width="227dp"
+            android:layout_height="184dp"
+            android:layout_gravity="top|right"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="6dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/bedroom_0" />
+
+        <ImageView
+            android:id="@+id/bathroom_overlay"
+            android:layout_width="156dp"
+            android:layout_height="184dp"
+            android:layout_gravity="top|left"
+            android:layout_marginLeft="7dp"
+            android:layout_marginTop="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/bathroom_1" />
+
+        <ImageView
+            android:id="@+id/cheminee_overlay"
             android:layout_width="225dp"
             android:layout_height="179dp"
             android:layout_gravity="bottom|right"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="5dp"
             android:layout_marginBottom="5dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/livingroom_1"
-            android:visibility="invisible"
+            android:src="@drawable/livingroom_0"
             />
     </FrameLayout>
 
