@@ -73,17 +73,48 @@
 
 </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+
+        tools:ignore="MissingConstraints">
         <Button
-            android:id="@+id/button_second"
+            android:id="@+id/button_rslvLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Click"
+            android:text="Resolve Light"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+        <Button
+            android:id="@+id/button_rslvWater"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Resolve Water"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+        <Button
+            android:id="@+id/button_rslvTrash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Resolve Trash"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+        <Button
+            android:id="@+id/button_rslvHeat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Resolve Heat"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-
-
+    </LinearLayout>
 
         <!-- barre de progression -->
         <View

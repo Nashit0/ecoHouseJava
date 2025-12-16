@@ -25,7 +25,7 @@ public class SecondFragment extends Fragment {
     private static Integer highScore = 0;
     private static int secondsElapsed = 0;
     private static int bestTime = 0;
-    private static int secondsBeforeEvent = 3;
+    private static int secondsBeforeEvent;
     private static int actualSecondsBeforeEvent = secondsBeforeEvent;
     //Problèmes :
     // 3 niveaux de danger (1 à régler ,2 urgent, 3 extremement urgent)
@@ -64,7 +64,7 @@ public class SecondFragment extends Fragment {
         badPoints = 0;
         score = 0;
         secondsElapsed = 0;
-        secondsBeforeEvent = 3;
+        secondsBeforeEvent = 6;
         actualSecondsBeforeEvent = secondsBeforeEvent;
         binding = FragmentSecondBinding.inflate(inflater, container, false);
         return binding.getRoot();
@@ -106,16 +106,21 @@ public class SecondFragment extends Fragment {
         // Lancer le timer
         handler.postDelayed(timerRunnable, 20);
 
-        binding.buttonSecond.setOnClickListener(v -> {
-
+        binding.buttonRslvLight.setOnClickListener(v -> {
                 resolveLightProblem();
-                resolveWaterProblem();
-                resolveTrashProblem();
-                resolveHeatProblem();
-
-                //Log.d("TEST_projet","test : "+badPoints);
                 updateProgBarDisplay();
-
+        });
+        binding.buttonRslvWater.setOnClickListener(v -> {
+            resolveWaterProblem();
+            updateProgBarDisplay();
+        });
+        binding.buttonRslvTrash.setOnClickListener(v -> {
+            resolveTrashProblem();
+            updateProgBarDisplay();
+        });
+        binding.buttonRslvHeat.setOnClickListener(v -> {
+            resolveHeatProblem();
+            updateProgBarDisplay();
         });
     }
 
@@ -169,8 +174,9 @@ public class SecondFragment extends Fragment {
         }
 
         //Changer difficulté au fur et a mesure du temps
-        if (secondsElapsed > 6 && secondsElapsed < 16) secondsBeforeEvent = 2;
-        if (secondsElapsed >= 16) secondsBeforeEvent = 1;
+        if (secondsElapsed > 10 && secondsElapsed < 30) secondsBeforeEvent = 4;
+        if (secondsElapsed >= 30 && secondsElapsed < 40) secondsBeforeEvent = 2;
+        if (secondsElapsed >= 40) secondsBeforeEvent = 1;
     }
 
     public void createGameProblem() {
@@ -220,7 +226,7 @@ public class SecondFragment extends Fragment {
     public void resolveLightProblem() {
         if (problemLight >0) {
             lightUnsolvedSeconds = 0;
-            problemLight = 0;
+
             //enlever l'interdiction de selectionner le problème dans le code aléatoire
             for (int i = 0; i < forbiddenRandomNumber.size(); i++) {
                 if(forbiddenRandomNumber.get(i) == 1) {
@@ -234,6 +240,7 @@ public class SecondFragment extends Fragment {
             if(problemLight == 1)score += 30;
             if(problemLight == 2)score += 20;
             if(problemLight == 3)score += 10;
+            problemLight = 0;
         }
         else {
             badPoints+= 10;
@@ -243,7 +250,6 @@ public class SecondFragment extends Fragment {
     public void resolveWaterProblem() {
         if (problemWater >0) {
             waterUnsolvedSeconds = 0;
-            problemWater = 0;
             //enlever l'interdiction de selectionner le problème dans le code aléatoire
             for (int i = 0; i < forbiddenRandomNumber.size(); i++) {
                 if(forbiddenRandomNumber.get(i) == 2) {
@@ -257,6 +263,8 @@ public class SecondFragment extends Fragment {
             if(problemWater == 1)score += 30;
             if(problemWater == 2)score += 20;
             if(problemWater == 3)score += 10;
+            problemWater = 0;
+
         }
         else {
             badPoints+= 10;
@@ -266,7 +274,6 @@ public class SecondFragment extends Fragment {
     public void resolveTrashProblem() {
         if (problemTrash >0) {
             trashUnsolvedSeconds = 0;
-            problemTrash = 0;
             //enlever l'interdiction de selectionner le problème dans le code aléatoire
             for (int i = 0; i < forbiddenRandomNumber.size(); i++) {
                 if(forbiddenRandomNumber.get(i) == 3) {
@@ -280,6 +287,8 @@ public class SecondFragment extends Fragment {
             if(problemTrash == 1)score += 30;
             if(problemTrash == 2)score += 20;
             if(problemTrash == 3)score += 10;
+            problemTrash = 0;
+
         }
         else {
             badPoints+= 10;
@@ -290,7 +299,6 @@ public class SecondFragment extends Fragment {
     public void resolveHeatProblem() {
         if (problemHeating >0) {
             heatUnsolvedSeconds = 0;
-            problemHeating = 0;
             //enlever l'interdiction de selectionner le problème dans le code aléatoire
             for (int i = 0; i < forbiddenRandomNumber.size(); i++) {
                 if(forbiddenRandomNumber.get(i) == 4) {
@@ -301,6 +309,8 @@ public class SecondFragment extends Fragment {
                 if(problemHeating == 1)score += 30;
                 if(problemHeating == 2)score += 20;
                 if(problemHeating == 3)score += 10;
+                problemHeating = 0;
+
             }
             heatUnsolvedSeconds = 0;
             Log.d("TEST_projet","HEAT PROBLEME REMOVED" + forbiddenRandomNumber);
