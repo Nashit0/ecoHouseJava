@@ -117,15 +117,14 @@
 
         <ImageView
             android:id="@+id/robinet"
-            android:padding="24dp"
+            android:padding="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Encadré"
             android:scaleType="fitCenter"
             android:src="@drawable/faucet"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
 
     </LinearLayout>
 
@@ -141,6 +140,30 @@
             android:scaleType="fitCenter"
             android:src="@drawable/house_bg" />
 
+        <FrameLayout
+            android:id="@+id/kitchen_container"
+            android:layout_width="155dp"
+            android:layout_height="178dp"
+            android:layout_gravity="bottom|left"
+            android:layout_marginLeft="7dp"
+            android:layout_marginBottom="6dp"
+            >
+            <ImageView
+                android:id="@+id/kitchen_overlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/kitchen_1" />
+
+            <View
+                android:id="@+id/four"
+                android:layout_width="34dp"
+                android:layout_height="21dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="55dp" />
+        </FrameLayout>
+
+
         <ImageView
             android:id="@+id/light_overlay"
             android:layout_width="227dp"
@@ -150,6 +173,8 @@
             android:layout_marginRight="6dp"
             android:scaleType="centerCrop"
             android:src="@drawable/bedroom_0" />
+
+
 
         <ImageView
             android:id="@+id/bathroom_overlay"
@@ -163,17 +188,22 @@
 
         <ImageView
             android:id="@+id/cheminee_overlay"
-            android:layout_width="225dp"
+            android:layout_width="232dp"
             android:layout_height="179dp"
             android:layout_gravity="bottom|right"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="5dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/livingroom_0"
-            />
+            android:src="@drawable/livingroom_0" />
     </FrameLayout>
 
 
 </LinearLayout>
 
+    <ImageView
+        android:id="@+id/handGrab"
+        android:layout_width="52dp"
+        android:layout_height="50dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/hand_grab" />
 </androidx.constraintlayout.widget.ConstraintLayout>
