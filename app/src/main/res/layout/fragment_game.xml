@@ -22,7 +22,6 @@
     >
 
     <LinearLayout
-        android:visibility="gone"
         android:id="@+id/tutorial_screen"
         android:layout_width="200dp"
         android:layout_height="match_parent"
@@ -42,18 +41,15 @@
             android:layout_gravity="center_vertical"
             android:src="@drawable/tutorial" />
 
-        <ImageButton
+        <Button
             android:id="@+id/play_button"
-            android:layout_width="match_parent"
-            android:layout_height="59dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Encadré"
-            android:scaleType="fitCenter"
-            android:src="@drawable/button_states"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="dsasd"
+            android:fontFamily="@font/pixel_game"
+            android:textSize="32dp"
+            app:backgroundTint="@null"
+            android:background="@drawable/button_states"  />
     </LinearLayout>
 
     <LinearLayout
@@ -70,6 +66,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/game_elements_bg"
         >
+
         <LinearLayout
             android:gravity="top|center"
             android:layout_width="match_parent"
