@@ -126,16 +126,19 @@
                     />
 
     </LinearLayout>
-        <ImageButton
-            android:id="@+id/button_replay"
+
+        <Button
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/play_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Encadré"
-            android:scaleType="fitCenter"
-            android:src="@drawable/button_states"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:text="Réessayer ?"
+            android:fontFamily="@font/pixel_game"
+            android:textSize="32dp"
+            app:backgroundTint="@null"
+            android:background="@drawable/button_states"  />
+
     </LinearLayout>
 
 

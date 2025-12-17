@@ -8,17 +8,27 @@ import androidx.lifecycle.ViewModel;
 
 public class GameViewModel extends ViewModel {
     private final MutableLiveData<Integer> lightLevel = new MutableLiveData<>(3);
-    private final MutableLiveData<Integer> valveState = new MutableLiveData<>(1); // 1 = fuit, 0 = fermé
-    private final MutableLiveData<Integer> kitchenState = new MutableLiveData<>(1);
+    private final MutableLiveData<Integer> bathState = new MutableLiveData<>(1);
+    private final MutableLiveData<Integer> kitchenSiphonState = new MutableLiveData<>(1);
+    private final MutableLiveData<Integer> sdbSiphonState = new MutableLiveData<>(1);
+    private final MutableLiveData<Integer> StoveState = new MutableLiveData<>(1);
+    private final MutableLiveData<Integer> FridgeState = new MutableLiveData<>(1);
     private final MutableLiveData<Boolean> gameStarted = new MutableLiveData<>(false);
 
     private final Handler gameHandler = new Handler(); // temps qui s'ecoule
     private Runnable waterWasteRunnable;
 
+    public enum FaucetType {
+        BATH, CUISINE, SDB
+    }
+
     // Getters pour le Fragment
     public LiveData<Integer> getLightLevel() { return lightLevel; }
-    public LiveData<Integer> getValveState() { return valveState; }
-    public LiveData<Integer> getKitchenState() { return kitchenState; }
+    public LiveData<Integer> getKitchenSiphonState() { return kitchenSiphonState; }
+    public LiveData<Integer> getsdbSiphonState() { return sdbSiphonState; }
+    public LiveData<Integer> getBathState() { return bathState; }
+    public LiveData<Integer> getStoveState() { return StoveState; }
+    public LiveData<Integer> getFridgeState() { return FridgeState; }
     public LiveData<Boolean> getGameStarted() { return gameStarted; }
 
     public void startGame() {
@@ -33,45 +43,45 @@ public class GameViewModel extends ViewModel {
     }
 
 
-    public void updateValvePosition(float angle) {
+    public void updateValvePosition(FaucetType type , float angle) {
+        int state = 0 ;
         if (angle < -90f) {
-            closeValve();
+            state = 0;
         } else if (angle > 90f) {
-            openValve();
+            state = 1 ;
+        }else{
+            return ;
         }
+
+        switch (type) {
+            case BATH: bathState.setValue(state); break;
+            case CUISINE: kitchenSiphonState.setValue(state); break;
+            case SDB: sdbSiphonState.setValue(state); break;
+        }
+
     }
 
     private void openValve() {
-        if (valveState.getValue() != null && valveState.getValue() == 0) {
-            valveState.setValue(1);
-            startGaspillage();
-        }
+        bathState.setValue(1);
     }
 
     private void closeValve() {
-        valveState.setValue(0);
-        gameHandler.removeCallbacks(waterWasteRunnable);
-    }
-
-    private void startGaspillage() {
-        waterWasteRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (valveState.getValue() == 1) {
-                    /* int currentScore = score.getValue() != null ? score.getValue() : 0;
-                    score.setValue(Math.max(0, currentScore - 2)); // Perd 2 pts par seconde */
-                    gameHandler.postDelayed(this, 1000); // Récurrence 1s
-                }
-            }
-        };
-        gameHandler.postDelayed(waterWasteRunnable, 1000);
+        bathState.setValue(0);
     }
 
     public void handleFour() {
-        if(kitchenState.getValue() != null && kitchenState.getValue() == 0){
-            kitchenState.setValue(1);
+        if(StoveState.getValue() != null && StoveState.getValue() == 0){
+            StoveState.setValue(1);
         }else{
-            kitchenState.setValue(0);
+            StoveState.setValue(0);
+        }
+    }
+
+    public void handleFridge() {
+        if(FridgeState.getValue() != null && FridgeState.getValue() == 0){
+            FridgeState.setValue(1);
+        }else{
+            FridgeState.setValue(0);
         }
     }
 }

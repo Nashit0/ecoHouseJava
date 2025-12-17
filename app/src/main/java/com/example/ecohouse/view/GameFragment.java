@@ -32,19 +32,20 @@ public class GameFragment extends Fragment {
             R.drawable.bedroom_3
     };
 
-    private final int[] valveDrawables = {
-            R.drawable.bathroom_0,
-            R.drawable.bathroom_1
+    private final int[] bathDrawables = {
+            R.drawable.bath_0,
+            R.drawable.bath_1
     };
 
-    private final int[] kitchenDrawables = {
-            R.drawable.kitchen_0,
-            R.drawable.kitchen_1
+    private final int[] stoveDrawables = {
+            R.drawable.stove_off,
+            R.drawable.stove_on
     };
 
-    // LE ROBINET
-    private float angleRotation = 0f;
-    private float angleInitial = 0f;
+    private final int[] fridgeDrawables = {
+            R.drawable.fridge_closed,
+            R.drawable.fridge_open
+    };
 
 
     @Override
@@ -64,7 +65,6 @@ public class GameFragment extends Fragment {
         viewModel.getGameStarted().observe(getViewLifecycleOwner(), started -> {
             if (started) {
                 binding.tutorialScreen.setVisibility(View.GONE);
-                binding.gameElements.setVisibility(View.VISIBLE);
             }
         });
 
@@ -75,12 +75,16 @@ public class GameFragment extends Fragment {
             binding.lightSwitch1.setSelected(level <= 0);
         });
 
-        viewModel.getValveState().observe(getViewLifecycleOwner(), state -> {
-            binding.bathroomOverlay.setImageResource(valveDrawables[state]);
+        viewModel.getBathState().observe(getViewLifecycleOwner(), state -> {
+            binding.bath.setImageResource(bathDrawables[state]);
         });
 
-        viewModel.getKitchenState().observe(getViewLifecycleOwner() , state-> {
-            binding.kitchenOverlay.setImageResource(kitchenDrawables[state]);
+        viewModel.getStoveState().observe(getViewLifecycleOwner() , state-> {
+            binding.stove.setImageResource(stoveDrawables[state]);
+        });
+
+        viewModel.getFridgeState().observe(getViewLifecycleOwner() , state-> {
+            binding.fridge.setImageResource(fridgeDrawables[state]);
         });
 
         binding.playButton.setOnClickListener(v -> viewModel.startGame());
@@ -89,52 +93,73 @@ public class GameFragment extends Fragment {
         binding.lightSwitch2.setOnClickListener(v -> viewModel.processLightSwitch(2));
         binding.lightSwitch1.setOnClickListener(v -> viewModel.processLightSwitch(1));
 
-        setupRobinetTouchListener();
+        setupRobinetTouchListener(binding.robinetBath , GameViewModel.FaucetType.BATH);
+        setupRobinetTouchListener(binding.robinetCuisine, GameViewModel.FaucetType.CUISINE);
+        setupRobinetTouchListener(binding.robinetSalleDeBain, GameViewModel.FaucetType.SDB);
         setupHandTouchListener() ;
+        setupTempTouchListener() ;
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void setupRobinetTouchListener() {
-        binding.robinet.setOnTouchListener(new View.OnTouchListener() {
+    private void setupRobinetTouchListener(ImageView faucet, GameViewModel.FaucetType type) {
+        faucet.setOnTouchListener(new View.OnTouchListener() {
+            // Variables locales : chaque robinet a les siennes
+            private float internalRotation = faucet.getRotation();
+            private float lastAngle = 0f;
+            private final float DEGREES_THRESHOLD = 3.0f; // Ignore les tremblements sous 3 degrés
+
             @Override
             public boolean onTouch(View view, MotionEvent event) {
-                // calcul du centre du robinet
                 float centerX = view.getWidth() / 2f;
                 float centerY = view.getHeight() / 2f;
-
-                // calcul de l'emplacement du toucher par rapport au centre du robinet
                 float x = event.getX() - centerX;
                 float y = event.getY() - centerY;
 
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        angleInitial = (float) Math.toDegrees(Math.atan2(y, x));
+                        lastAngle = (float) Math.toDegrees(Math.atan2(y, x));
+                        // On récupère la rotation actuelle réelle au cas où une animation l'ait bougé
+                        internalRotation = view.getRotation();
                         break;
 
                     case MotionEvent.ACTION_MOVE:
-                        float nouvelAngle = (float) Math.toDegrees(Math.atan2(y, x));
-                        float deltaAngle = nouvelAngle - angleInitial;
+                        float currentAngle = (float) Math.toDegrees(Math.atan2(y, x));
+                        float deltaAngle = currentAngle - lastAngle;
 
+                        // Correction du passage 180° / -180°
                         if (deltaAngle > 180) deltaAngle -= 360;
                         if (deltaAngle < -180) deltaAngle += 360;
-                        angleRotation += deltaAngle;
-                        angleRotation = angleRotation % 360;
-                        view.setRotation(angleRotation);
-                        angleInitial = nouvelAngle;
-                        viewModel.updateValvePosition(angleRotation);
-                        break ;
+
+                        // STABILISATION : On ne bouge que si le mouvement est significatif
+                        if (Math.abs(deltaAngle) > DEGREES_THRESHOLD) {
+                            internalRotation += deltaAngle;
+
+                            // On limite pour éviter des chiffres astronomiques (ex: 450000°)
+                            internalRotation %= 360;
+
+                            view.setRotation(internalRotation);
+                            lastAngle = currentAngle;
+
+                            // Mise à jour du ViewModel
+                            viewModel.updateValvePosition(type, internalRotation);
+                            binding.angletest.setText(String.format("%.1f°", internalRotation));
+                        }
+                        break;
 
                     case MotionEvent.ACTION_UP:
-                        angleRotation = Math.round(angleRotation / 90f) * 90f;
-                        if (Math.abs(angleRotation) > 360) angleRotation = 0;
+                        // Snap propre à 90 degrés
+                        internalRotation = Math.round(view.getRotation() / 90f) * 90f;
+
                         view.animate()
-                                .rotation(angleRotation)
-                                .setDuration(200)
-                                .setInterpolator(new OvershootInterpolator(2.0f))
+                                .rotation(internalRotation)
+                                .setDuration(250)
+                                .setInterpolator(new OvershootInterpolator(1.5f))
                                 .start();
+
+                        viewModel.updateValvePosition(type, internalRotation);
                         break;
                 }
-                return true; // return true obligatoire pour indiquer qu'on a géré l'événement OnTouch
+                return true;
             }
         });
     }
@@ -162,17 +187,21 @@ public class GameFragment extends Fragment {
                         float newY = event.getRawY() + dY;
                         view.setX(newX);
                         view.setY(newY);
-                        if (isViewOverlapping(binding.handGrab, binding.four)) {
-                            binding.handGrab.setActivated(true);
+                        if (isViewOverlapping(binding.handGrab, binding.four) || isViewOverlapping(binding.handGrab, binding.fridge) ) {
+                            binding.handGrab.setImageResource(R.drawable.hand_active) ;
                         } else {
                             binding.handGrab.setActivated(false);
+                            binding.handGrab.setImageResource(R.drawable.hand_default) ;
                         }
                         break;
                     case MotionEvent.ACTION_UP:
                         if (isViewOverlapping(binding.handGrab, binding.four)) {
                             // ACTION REUSSIE
                             viewModel.handleFour();
-                        }
+                        }else if(isViewOverlapping(binding.handGrab, binding.fridge)){
+                            viewModel.handleFridge() ;
+                    }
+                        binding.handGrab.setImageResource(R.drawable.hand_default) ;
                         view.animate().x(startX).y(startY).start();
                         break;
                 }
@@ -181,6 +210,37 @@ public class GameFragment extends Fragment {
         }) ;
     }
 
+    private void setupTempTouchListener() {
+        View handle = binding.thermoHandle;
+        View jauge = binding.thermoJauge ;
+        handle.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    // Calcul de la position du doigt sur l'écran
+                    float rawY = event.getRawY();
+
+                    // Trouver la position du bas de la jauge sur l'écran
+                    int[] location = new int[2];
+                    jauge.getLocationOnScreen(location);
+                    int jaugeBottomY = location[1] + jauge.getHeight();
+
+                    // Calculer la nouvelle hauteur
+                    int newHeight = jaugeBottomY - (int) rawY;
+
+                    // Application des limites
+                    if (newHeight < toPx(10)) newHeight = toPx(10);
+                    if (newHeight > toPx(125)) newHeight = toPx(125);
+
+                    // Mise à jour de la hauteur dans le layout
+                    ViewGroup.LayoutParams params = jauge.getLayoutParams();
+                    params.height = newHeight;
+                    jauge.setLayoutParams(params);
+                }
+                return true; // Important pour continuer à recevoir les événements de mouvement
+            }
+        });
+    }
 
     @Override
     public void onDestroyView() {
@@ -203,6 +263,10 @@ public class GameFragment extends Fragment {
 
         // Vérifie l'intersection entre les deux
         return rectFirst.intersect(rectSecond);
+    }
+
+    private int toPx(int dp) {
+        return (int) (dp * getResources().getDisplayMetrics().density);
     }
 
     /* pour la cheminee à ajuster

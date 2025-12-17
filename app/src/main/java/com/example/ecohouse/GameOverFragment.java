@@ -1,4 +1,4 @@
-package com.example.ecohouse;
+/* package com.example.ecohouse;
 
 import android.os.Bundle;
 
@@ -91,3 +91,5 @@ public class GameOverFragment extends Fragment {
         }
     }
 }
+
+ */
