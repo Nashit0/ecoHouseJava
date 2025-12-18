@@ -329,7 +329,6 @@
 
 
     <LinearLayout
-        android:visibility="gone"
         android:id="@+id/tutorial_screen"
         android:layout_width="400dp"
         android:layout_height="360dp"
@@ -350,6 +349,7 @@
             android:text="Blabla de tuto"
             android:fontFamily="@font/yoster_island"/>
 
+
         <Button
             android:id="@+id/play_button"
             android:layout_width="177dp"
@@ -360,6 +360,11 @@
             android:textColor="#F6E3BE"
             android:textSize="32dp"
             app:backgroundTint="@null" />
+        
+        <com.example.ecohouse.components.PixelImageView
+            android:layout_width="200dp"
+            android:layout_height="70dp"
+            android:src="@drawable/button_default"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
