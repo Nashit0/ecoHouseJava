@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -52,6 +53,7 @@ public class GameFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
        binding = FragmentGameBinding.inflate(inflater, container, false);
        viewModel = new ViewModelProvider(requireActivity()).get(GameViewModel.class);
         return binding.getRoot();
@@ -65,8 +67,13 @@ public class GameFragment extends Fragment {
         // LES OBSERVEURS (la vue qui change lorsque le viewmodel change)
         viewModel.getGameStarted().observe(getViewLifecycleOwner(), started -> {
             if (started) {
+                Log.d("TEST_projet", "game indeed started");
+                //viewModel.startGame();
                 binding.tutorialScreen.setVisibility(View.GONE);
             }
+        });
+        viewModel.getBadPoints().observe(getViewLifecycleOwner(), points -> {
+            updateAlertBarDisplay(points);
         });
 
         viewModel.getLightLevel().observe(getViewLifecycleOwner(), level -> {
@@ -271,7 +278,24 @@ public class GameFragment extends Fragment {
         return (int) (dp * getResources().getDisplayMetrics().density);
     }
 
+    public void updateAlertBarDisplay(Integer badPoints) {
+        View rectangleView = binding.jaugeGaspillage;
+        int parentWidth = ((View) rectangleView.getParent()).getWidth();
+        //Log.d("TEST_projet", "Taille écran : "+ parentWidth);
 
+        ViewGroup.LayoutParams params = rectangleView.getLayoutParams();
+        //params.width = (30 * parentWidth) / 500;
+        params.width = (int) (badPoints * getResources().getDisplayMetrics().density);
+        if (badPoints < 2) {
+            params.width = (int) (1 * getResources().getDisplayMetrics().density);
+        }
+        else if (badPoints> 323) {
+            params.width = (int) (324 * getResources().getDisplayMetrics().density);
+
+        }
+        params.height = 20;
+        rectangleView.setLayoutParams(params);
+    }
     /* pour la cheminee à ajuster
     private void toggleLight() {
         isLightOn = !isLightOn;
@@ -288,5 +312,4 @@ public class GameFragment extends Fragment {
         }
     }
      */
-
 }
