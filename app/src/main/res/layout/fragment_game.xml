@@ -132,8 +132,8 @@
     <View
         android:id="@+id/thermo_jauge"
         android:layout_width="0dp"
-        android:layout_height="125dp"
-        android:background="#ED5C5F"
+        android:layout_height="40dp"
+        android:background="#7D6812"
         app:layout_constraintBottom_toBottomOf="@id/thermo"
         app:layout_constraintStart_toStartOf="@id/thermo"
         app:layout_constraintEnd_toEndOf="@id/thermo"
@@ -244,6 +244,16 @@
             android:src="@drawable/house_bg" />
 
         <com.example.ecohouse.components.PixelImageView
+            android:id="@+id/cheminee"
+            android:layout_width="40dp"
+            android:layout_height="38dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="77dp"
+            android:layout_marginBottom="75dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/cheminee_0" />
+
+        <com.example.ecohouse.components.PixelImageView
             android:id="@+id/bath"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -342,16 +352,6 @@
             android:src="@drawable/l_lamp_0" />
 
 
-        <com.example.ecohouse.components.PixelImageView
-            android:contentDescription="salon"
-            android:id="@+id/cheminee_overlay"
-            android:layout_width="196dp"
-            android:layout_height="156dp"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="5dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/livingroom_0" />
     </FrameLayout>
 
     <com.example.ecohouse.components.PixelImageView

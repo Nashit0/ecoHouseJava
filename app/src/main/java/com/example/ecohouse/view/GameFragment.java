@@ -1,12 +1,15 @@
 package com.example.ecohouse.view;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import android.animation.ArgbEvaluator;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -42,6 +45,11 @@ public class GameFragment extends Fragment {
     private final int[] sLampDrawables = {
             R.drawable.little_lamp_0,
             R.drawable.little_lamp_1,
+    };
+
+    private final int[] chemineeDrawables = {
+            R.drawable.cheminee_0,
+            R.drawable.cheminee_1,
     };
 
     private final int[] bathDrawables = {
@@ -107,6 +115,22 @@ public class GameFragment extends Fragment {
         viewModel.getLight3Status().observe(getViewLifecycleOwner(), isOn -> {
             binding.lLamp.setImageResource(isOn ?  lLampDrawables[1] : lLampDrawables[0]);
             binding.lightSwitch3.setSelected(isOn);
+        });
+
+        viewModel.getIsFireplaceOn().observe(getViewLifecycleOwner(), isOn -> {
+            binding.cheminee.setImageResource(isOn ? chemineeDrawables[1] : chemineeDrawables[0] );
+
+            int colorFrom = isOn ? Color.parseColor("#7D6812") : Color.parseColor("#ED5C5F");
+            int colorTo = isOn ? Color.parseColor("#ED5C5F") : Color.parseColor("#7D6812");
+
+            ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+            colorAnimation.setDuration(200);
+
+            colorAnimation.addUpdateListener(animator -> {
+                binding.thermoJauge.setBackgroundColor((int) animator.getAnimatedValue());
+            });
+
+            colorAnimation.start();
         });
 
         viewModel.getBathState().observe(getViewLifecycleOwner(), state -> {
@@ -256,6 +280,7 @@ public class GameFragment extends Fragment {
     private void setupTempTouchListener() {
         View handle = binding.thermoHandle;
         View jauge = binding.thermoJauge ;
+        int maxHeight = toPx(125);
         handle.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -279,6 +304,14 @@ public class GameFragment extends Fragment {
                     ViewGroup.LayoutParams params = jauge.getLayoutParams();
                     params.height = newHeight;
                     jauge.setLayoutParams(params);
+
+                    viewModel.updateTemperature(newHeight, maxHeight);
+                    boolean isAboveHalf = newHeight > (maxHeight / 2);
+                    Boolean currentState = viewModel.getIsFireplaceOn().getValue();
+
+                    if (currentState != null && isAboveHalf != currentState) {
+                        v.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY);
+                    }
                 }
                 return true; // Important pour continuer à recevoir les événements de mouvement
             }

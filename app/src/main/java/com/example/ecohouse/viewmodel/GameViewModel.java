@@ -15,9 +15,7 @@ public class GameViewModel extends ViewModel {
     private MutableLiveData<Boolean> light1 = new MutableLiveData<>(false);
     private MutableLiveData<Boolean> light2 = new MutableLiveData<>(false);
     private MutableLiveData<Boolean> light3 = new MutableLiveData<>(false);
-    public LiveData<Boolean> getLight1Status() { return light1; }
-    public LiveData<Boolean> getLight2Status() { return light2; }
-    public LiveData<Boolean> getLight3Status() { return light3; }
+    private MutableLiveData<Boolean> isFireplaceOn = new MutableLiveData<>(false);
     private final MutableLiveData<Integer> bathState = new MutableLiveData<>(1);
     private final MutableLiveData<Integer> kitchenSiphonState = new MutableLiveData<>(1);
     private final MutableLiveData<Integer> sdbSiphonState = new MutableLiveData<>(1);
@@ -42,6 +40,12 @@ public class GameViewModel extends ViewModel {
     }
 
     // Getters pour le Fragment
+
+    public LiveData<Boolean> getLight1Status() { return light1; }
+    public LiveData<Boolean> getLight2Status() { return light2; }
+    public LiveData<Boolean> getLight3Status() { return light3; }
+    public LiveData<Boolean> getIsFireplaceOn() { return isFireplaceOn; }
+
     public LiveData<Integer> getKitchenSiphonState() { return kitchenSiphonState; }
     public LiveData<Integer> getsdbSiphonState() { return sdbSiphonState; }
     public LiveData<Integer> getBathState() { return bathState; }
@@ -55,33 +59,7 @@ public class GameViewModel extends ViewModel {
         Log.d("TEST_projet", "game start");
 
         gameStarted.setValue(true);
-        gameLoop();
-    }
-    private void gameLoop() {
-        loopRunnable = new Runnable() {
-            @Override
-            public void run() {
-                //GameFragment.updateAlertBarDisplay();
-                Integer current = badPoints.getValue();
-                int valueB = current != null ? current : 0;
-                badPoints.setValue(valueB + 10);// MAX -> 324
-                if (badPoints.getValue() > 323) {
-                 //   int d = Log.d("TEST_projet", "PERDU !!!");
-                    //CHARGER GAME OVER
-                }
-                Integer currentSecondsElapsed = secondsElapsed.getValue();
-                int value = currentSecondsElapsed != null ? currentSecondsElapsed : 0;
-                secondsElapsed.setValue(value + 1);
-
-                //Permet de créer un problème toutes les "secondsElapsedBeforeProblem" secondes
-                if ((secondsElapsed.getValue() % getSecondsElapsedBeforeProblem().getValue()) == 0) {
-                    createGameProblem();
-                }
-                //int d = Log.d("TEST_projet", "Une seconde s'est écoulé "+secondsElapsed.getValue());
-                gameHandler.postDelayed(this, 1000); // Récurrence 1s
-            }
-        };
-        gameHandler.postDelayed(loopRunnable, 1000);
+        // gameLoop();
     }
 
     public void toggleLight(int switchNumber) {
@@ -92,21 +70,16 @@ public class GameViewModel extends ViewModel {
         } else if (switchNumber == 3) {
             light3.setValue(!light3.getValue());
         }
-        if (lightLevel.getValue()==0) {
-            Integer currentB = badPoints.getValue();
-            int valueB = currentB != null ? currentB : 0;
-            badPoints.setValue(valueB - 30);// MAX -> 324
-            //enlever l'interdiction de selectionner le problème dans le code aléatoire
-            //for (int i = 0; i < forbiddenRandomNumber.size(); i++) {
-            //    if(forbiddenRandomNumber.get(i) == 1) {
-            //        Log.d("TEST_projet", "supprime 1");
-
-            //        forbiddenRandomNumber.remove(i);
-            //    }
-            //}
-        }
     }
 
+    public void updateTemperature(int currentHeightPx, int maxHeightPx) {
+        boolean shouldBeOn = currentHeightPx > (maxHeightPx / 2);
+
+        // On ne met à jour que si l'état change pour éviter des calculs inutiles
+        if (isFireplaceOn.getValue() != null && isFireplaceOn.getValue() != shouldBeOn) {
+            isFireplaceOn.setValue(shouldBeOn);
+        }
+    }
 
     public void updateValvePosition(FaucetType type , float angle) {
         int state = 0 ;
@@ -196,41 +169,6 @@ public class GameViewModel extends ViewModel {
             //    }
             //}
         }
-    }
-
-    public void createGameProblem() {
-        int randomProblem = randomNumber1To4();
-        int d = Log.d("TEST_projet", "toutes les 4s "+secondsElapsed.getValue() + "rdm \n"
-                +randomProblem + " et puis "+ forbiddenRandomNumber);
-
-        if(randomProblem==1){
-            d = Log.d("TEST_projet", "Problem1 avant "+lightLevel.getValue());
-            lightLevel.setValue(3);
-            d = Log.d("TEST_projet", "Problem1 après "+lightLevel.getValue());
-            //NOTE pour moi : enlever lnb interdit !!!
-        }
-        if( randomProblem==2) {
-            d = Log.d("TEST_projet", "Problem2 avant "+bathStateProblem.getValue());
-            bathState.setValue(1);
-            bathStateProblem.setValue(1);
-
-            d = Log.d("TEST_projet", "Problem2 avant "+bathStateProblem.getValue());
-        }
-        if(randomProblem==3){
-            d = Log.d("TEST_projet", "Problem3 avant "+StoveState.getValue());
-            StoveState.setValue(1);
-            d = Log.d("TEST_projet", "Problem3 avant "+StoveState.getValue());
-        }
-        if(randomProblem==4){
-            d = Log.d("TEST_projet", "problem 4 avant " + FridgeState.getValue());
-            FridgeState.setValue(1);
-            d = Log.d("TEST_projet", "problem 4 après " + FridgeState.getValue());
-        }
-
-        //d = Log.d("TEST_projet", "problem 4 avant " + kitchenSiphonState.getValue());
-        //kitchenSiphonState.setValue(1);
-        //d = Log.d("TEST_projet", "problem 4 après " + kitchenSiphonState.getValue());
-
     }
 
 
