@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/background_game_rectangle">
+    android:background="@drawable/background_grid">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/col_1"
@@ -328,43 +328,50 @@
         app:layout_constraintTop_toBottomOf="@+id/thermo" />
 
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/tutorial_screen"
         android:layout_width="400dp"
         android:layout_height="360dp"
-        android:layout_marginEnd="16dp"
-        android:gravity="center"
-        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/background_info"
-        >
+        app:layout_constraintTop_toTopOf="parent">
 
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Blabla de tuto"
-            android:fontFamily="@font/yoster_island"/>
-
-
-        <Button
-            android:id="@+id/play_button"
-            android:layout_width="177dp"
-            android:layout_height="59dp"
-            android:background="@drawable/button_states"
-            android:fontFamily="@font/pixel_game"
-            android:text="JOUER"
-            android:textColor="#F6E3BE"
-            android:textSize="32dp"
-            app:backgroundTint="@null" />
-        
         <com.example.ecohouse.components.PixelImageView
-            android:layout_width="200dp"
-            android:layout_height="70dp"
-            android:src="@drawable/button_default"/>
-    </LinearLayout>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/background_info"
+            android:scaleType="fitXY" />
+
+        <LinearLayout
+            android:id="@+id/tutorial_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Blabla de tuto"
+                android:fontFamily="@font/yoster_island"
+                android:textSize="20sp"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="24dp"/>
+
+            <Button
+                android:id="@+id/play_button"
+                android:layout_width="177dp"
+                android:layout_height="59dp"
+                android:background="@drawable/button_states"
+                android:fontFamily="@font/pixel_game"
+                android:text="JOUER"
+                android:textColor="#F6E3BE"
+                android:textSize="32dp"
+                app:backgroundTint="@null" />
+
+        </LinearLayout>
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
