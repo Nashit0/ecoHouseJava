@@ -6,71 +6,154 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import com.example.ecohouse.model.Problem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import com.example.ecohouse.R;
+import com.example.ecohouse.model.BasicProblem;
+import com.example.ecohouse.model.EcoProblem ;
+import com.example.ecohouse.model.FaucetProblem;
+
+import static com.example.ecohouse.utils.ProblemIds.*;
 
 public class GameViewModel extends ViewModel {
-    private MutableLiveData<Boolean> light1 = new MutableLiveData<>(false);
-    private MutableLiveData<Boolean> light2 = new MutableLiveData<>(false);
-    private MutableLiveData<Boolean> light3 = new MutableLiveData<>(false);
-    private MutableLiveData<Boolean> isFireplaceOn = new MutableLiveData<>(false);
-    private final MutableLiveData<Integer> bathState = new MutableLiveData<>(1);
-    private final MutableLiveData<Integer> kitchenSiphonState = new MutableLiveData<>(1);
-    private final MutableLiveData<Integer> sdbSiphonState = new MutableLiveData<>(1);
-    private final MutableLiveData<Integer> StoveState = new MutableLiveData<>(1);
-    private final MutableLiveData<Integer> FridgeState = new MutableLiveData<>(1);
-    private final MutableLiveData<Boolean> gameStarted = new MutableLiveData<>(false);
-    private final MutableLiveData<Integer> badPoints = new MutableLiveData<>(0);
-    private final MutableLiveData<Integer> bathStateProblem = new MutableLiveData<>(1);
 
+    // Gestion de l'affichage pour l'état du jeu
+    private MutableLiveData<Float> urgencyGauge = new MutableLiveData<>(0f);
+    private MutableLiveData<Integer> activeProblemsCount = new MutableLiveData<>(0);
+    private MutableLiveData<Boolean> isGameOver = new MutableLiveData<>(false);
+    private MutableLiveData<List<EcoProblem>> problemsUpdate = new MutableLiveData<>();
 
-    private final Handler gameHandler = new Handler(); // temps qui s'ecoule
-    private Runnable loopRunnable;
-    //Variables
-    private final MutableLiveData<Integer> secondsElapsed = new MutableLiveData<>(0);
-    private final MutableLiveData<Integer> secondsElapsedBeforeProblem = new MutableLiveData<>(4);
+    // Liste de tous les problèmes possibles dans la maison
+    private List<EcoProblem> allProblems = new ArrayList<>();
 
-    private final List<Integer> forbiddenRandomNumber = new ArrayList<>();
+    // Paramètres pour progressivement calibrer la difficulté
+    private long startTime;
+    private Handler gameHandler = new Handler();
+    private float difficultyMultiplier = 1.0f;
 
-
-    public enum FaucetType {
-        BATH, CUISINE, SDB
+    public GameViewModel() {
+        startTime = System.currentTimeMillis(); // debut d'une partie
+        setupProblems(); // mise en place des problemes
+        startGameLoop(); // demarrage de la boucle du jeu
     }
 
-    // Getters pour le Fragment
+    private void setupProblems() {
+        allProblems.add(new FaucetProblem( FAUCET_KITCHEN, "Robinet cuisine", R.drawable.faucet_kitchen_1, R.drawable.faucet_kitchen_0));
+        allProblems.add(new FaucetProblem(FAUCET_SDB, "Robinet salle de bain", R.drawable.faucet_sdb_1, R.drawable.faucet_sdb_0));
+        allProblems.add(new FaucetProblem( FAUCET_BATH, "Robinet baignoire" , R.drawable.bath_1 , R.drawable.bath_0 )) ;
+        allProblems.add(new BasicProblem(SMALL_LIGHT_1 , "Petite lampe 1" , R.drawable.little_lamp_1 , R.drawable.little_lamp_0)) ;
+        allProblems.add(new BasicProblem(SMALL_LIGHT_2 , "Petite lampe 2" , R.drawable.little_lamp_1 , R.drawable.little_lamp_0)) ;
+        allProblems.add(new BasicProblem(LARGE_LIGHT , "Grande lampe" , R.drawable.l_lamp_1 , R.drawable.l_lamp_0)) ;
+        allProblems.add(new BasicProblem(FIREPLACE , "Cheminée" , R.drawable.cheminee_1 , R.drawable.cheminee_0)) ;
+        allProblems.add(new BasicProblem(STOVE , "Four" , R.drawable.stove_on , R.drawable.stove_off)) ;
+        allProblems.add(new BasicProblem(FRIDGE , "Réfrégirateur" , R.drawable.fridge_open , R.drawable.fridge_closed)) ;
 
-    public LiveData<Boolean> getLight1Status() { return light1; }
-    public LiveData<Boolean> getLight2Status() { return light2; }
-    public LiveData<Boolean> getLight3Status() { return light3; }
-    public LiveData<Boolean> getIsFireplaceOn() { return isFireplaceOn; }
-
-    public LiveData<Integer> getKitchenSiphonState() { return kitchenSiphonState; }
-    public LiveData<Integer> getsdbSiphonState() { return sdbSiphonState; }
-    public LiveData<Integer> getBathState() { return bathState; }
-    public LiveData<Integer> getStoveState() { return StoveState; }
-    public LiveData<Integer> getFridgeState() { return FridgeState; }
-    public LiveData<Boolean> getGameStarted() { return gameStarted; }
-    public MutableLiveData<Integer> getSecondsElapsedBeforeProblem() { return secondsElapsedBeforeProblem; }
-    public LiveData<Integer> getBadPoints() { return badPoints; }
-
-    public void startGame() {
-        Log.d("TEST_projet", "game start");
-
-        gameStarted.setValue(true);
-        // gameLoop();
+        // Ajoute les autres ici (Lampes, Cheminée, etc.)
     }
 
-    public void toggleLight(int switchNumber) {
-        if (switchNumber == 1) {
-            light1.setValue(!light1.getValue());
-        } else if (switchNumber == 2) {
-            light2.setValue(!light2.getValue());
-        } else if (switchNumber == 3) {
-            light3.setValue(!light3.getValue());
+    private void startGameLoop() {
+        // Boucle de spawn
+        gameHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (Boolean.TRUE.equals(isGameOver.getValue())) return;
+
+                updateDifficulty();
+                trySpawnProblem();
+
+                // Plus le temps passe, plus le délai diminue
+                long nextSpawn = (long) (3000 / difficultyMultiplier);
+                gameHandler.postDelayed(this, Math.max(nextSpawn, 800));
+            }
+        }, 2000);
+
+        // Boucle de jauge (Toutes les 100ms pour de la fluidité)
+        gameHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                updateUrgency();
+                gameHandler.postDelayed(this, 100);
+            }
+        }, 100);
+    }
+
+    private void updateDifficulty() {
+        long secondsElapsed = (System.currentTimeMillis() - startTime) / 1000;
+        difficultyMultiplier = 1.0f + (secondsElapsed / 30.0f); // Augmente toutes les 30 sec
+    }
+
+    private void trySpawnProblem() {
+        // On cherche les problèmes inactifs
+        List<EcoProblem> inactive = new ArrayList<>();
+        for(EcoProblem p : allProblems) if(!p.isActive()) inactive.add(p);
+
+        if(!inactive.isEmpty()) {
+            inactive.get(new Random().nextInt(inactive.size())).spawn();
+            updateCount();
         }
     }
+
+    private void updateUrgency() {
+        float currentImpact = 0;
+        for(EcoProblem p : allProblems) {
+            if(p.isActive()) currentImpact += p.getUrgencyImpact();
+        }
+
+        float currentVal = (urgencyGauge.getValue() != null) ? urgencyGauge.getValue() : 0f;
+        float newValue = currentVal + (currentImpact * 0.1f) * difficultyMultiplier;
+        if (newValue >= 100f) {
+            newValue = 100f;
+            isGameOver.setValue(true);
+        }
+        urgencyGauge.setValue(newValue);
+    }
+
+
+
+    public void updateProblemInput(String problemId, Object... input) {
+        for (EcoProblem p : allProblems) {
+            if (p.getId().equals(problemId)) {
+                p.handleInput(input);
+                updateCount(); // On recalcule combien de problèmes restent
+                break;
+            }
+        }
+    }
+
+    private void updateCount() {
+        int count = 0;
+        for(EcoProblem p : allProblems) if(p.isActive()) count++;
+        activeProblemsCount.setValue(count);
+        problemsUpdate.setValue(allProblems);
+    }
+
+    public EcoProblem getProblemById(String id) {
+        for (EcoProblem p : allProblems) {
+            if (p.getId().equals(id)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public LiveData<Float> getUrgency() { return urgencyGauge; }
+    public LiveData<Integer> getActiveCount() { return activeProblemsCount; }
+    public LiveData<List<EcoProblem>> getProblemsUpdate() { return problemsUpdate; }
+    public LiveData<Boolean> getIsGameOver() {return isGameOver ; }
+
+
+
+    /*
+    public LiveData<Boolean> getIsFireplaceOn() { return isFireplaceOn; }
+
+
+    public LiveData<Integer> getStoveState() { return StoveState; }
+    public LiveData<Integer> getFridgeState() { return FridgeState; }
+
 
     public void updateTemperature(int currentHeightPx, int maxHeightPx) {
         boolean shouldBeOn = currentHeightPx > (maxHeightPx / 2);
@@ -81,53 +164,7 @@ public class GameViewModel extends ViewModel {
         }
     }
 
-    public void updateValvePosition(FaucetType type , float angle) {
-        int state = 0 ;
-        if (angle < -90f) {
-            state = 0;
-        } else if (angle > 90f) {
-            state = 1 ;
-        }else{
-            return ;
-        }
 
-        switch (type) {
-            case BATH:
-                bathState.setValue(state);
-                Log.d("TEST_projet", "case BATH");
-                if(bathStateProblem.getValue()==1) {
-                    Integer currentB = badPoints.getValue();
-                    int valueB = currentB != null ? currentB : 0;
-                    badPoints.setValue(valueB - 30);// MAX -> 324
-                    bathStateProblem.setValue(0);
-                }
-
-
-            break;
-            case CUISINE:
-                kitchenSiphonState.setValue(state);
-                Log.d("TEST_projet", "case CUISINE");
-
-                break;
-            case SDB:
-                sdbSiphonState.setValue(state);
-                Log.d("TEST_projet", "case SDB");
-
-                break;
-        }
-
-    }
-
-    private void openValve() {
-        bathState.setValue(1);
-    }
-
-    private void closeValve() {
-        bathState.setValue(0);
-        Integer current = badPoints.getValue();
-        int valueB = current != null ? current : 0;
-        badPoints.setValue(valueB - 30);// MAX -> 324
-    }
 
     public void handleFour() {
         if(StoveState.getValue() != null && StoveState.getValue() == 0){
@@ -171,18 +208,8 @@ public class GameViewModel extends ViewModel {
         }
     }
 
+     */
 
-    public Integer randomNumber1To4() {
-        if (forbiddenRandomNumber.size() == 4) {
-            return 0;
-        }
-        int randomPrblm;
-        //do {
-            randomPrblm = (int) (Math.random() * 4) + 1;
-        //} while (forbiddenRandomNumber.contains(randomPrblm));
-        //forbiddenRandomNumber.add(randomPrblm);
-        return randomPrblm;
-    }
 
 }
 

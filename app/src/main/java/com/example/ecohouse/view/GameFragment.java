@@ -4,16 +4,14 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import android.animation.ArgbEvaluator;
+
+
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,65 +21,30 @@ import android.widget.ImageView;
 
 import com.example.ecohouse.R;
 import com.example.ecohouse.databinding.FragmentGameBinding;
+import com.example.ecohouse.model.EcoProblem;
+import com.example.ecohouse.model.FaucetProblem;
 import com.example.ecohouse.viewmodel.GameViewModel;
+
+import static com.example.ecohouse.utils.ProblemIds.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class GameFragment extends Fragment {
 
-    private FragmentGameBinding binding ;
+    private FragmentGameBinding binding;
     private GameViewModel viewModel;
 
-    private final int[] bedroomDrawables = {
-            R.drawable.bedroom_0,
-            R.drawable.bedroom_1,
-            R.drawable.bedroom_2,
-            R.drawable.bedroom_3
-    };
+    // Les vues qui seront amenées à etre mise à jour
+    private List<ImageView> problemViews;
 
-    private final int[] lLampDrawables = {
-            R.drawable.l_lamp_0,
-            R.drawable.l_lamp_1,
-    };
-
-    private final int[] sLampDrawables = {
-            R.drawable.little_lamp_0,
-            R.drawable.little_lamp_1,
-    };
-
-    private final int[] chemineeDrawables = {
-            R.drawable.cheminee_0,
-            R.drawable.cheminee_1,
-    };
-
-    private final int[] bathDrawables = {
-            R.drawable.bath_0,
-            R.drawable.bath_1
-    };
-    private final int[] kitchenFaucetDrawables = {
-            R.drawable.faucet_kitchen_0,
-            R.drawable.faucet_kitchen_1
-    };
-
-    private final int[] sdbFaucetDrawables = {
-            R.drawable.faucet_sdb_0,
-            R.drawable.faucet_sdb_1
-    };
-
-    private final int[] stoveDrawables = {
-            R.drawable.stove_off,
-            R.drawable.stove_on
-    };
-
-    private final int[] fridgeDrawables = {
-            R.drawable.fridge_closed,
-            R.drawable.fridge_open
-    };
 
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-       binding = FragmentGameBinding.inflate(inflater, container, false);
-       viewModel = new ViewModelProvider(requireActivity()).get(GameViewModel.class);
+        binding = FragmentGameBinding.inflate(inflater, container, false);
+        viewModel = new ViewModelProvider(requireActivity()).get(GameViewModel.class);
         return binding.getRoot();
     }
 
@@ -90,84 +53,102 @@ public class GameFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        initProblemViews();
+
         // LES OBSERVEURS (la vue qui change lorsque le viewmodel change)
-        viewModel.getGameStarted().observe(getViewLifecycleOwner(), started -> {
-            if (started) {
-                Log.d("TEST_projet", "game indeed started");
-                //viewModel.startGame();
-                binding.tutorialScreen.setVisibility(View.GONE);
+
+        viewModel.getActiveCount().observe(getViewLifecycleOwner(), count -> {
+            if (count > 0) {
+                binding.messageGaspillage.setText("ALERTE: " + count + " GASPILLAGES !");
+                binding.messageGaspillageDouble.setText("ALERTE: " + count + " GASPILLAGES !");
+            } else {
+                binding.messageGaspillage.setText("TOUT VA BIEN");
+                binding.messageGaspillageDouble.setText("TOUT VA BIEN");
             }
         });
-        viewModel.getBadPoints().observe(getViewLifecycleOwner(), points -> {
-            updateAlertBarDisplay(points);
+
+        // afin d'eviter que la jauge grandisse excessivement si les dimesnions du parent
+        // n'ont pas encore été chargée
+        binding.jaugeGaspillage.post(() -> {
+            ViewGroup.LayoutParams params = binding.jaugeGaspillage.getLayoutParams();
+            params.width = 1;
+            binding.jaugeGaspillage.setLayoutParams(params);
         });
 
-        viewModel.getLight1Status().observe(getViewLifecycleOwner(), isOn -> {
-            binding.sLamp1.setImageResource(isOn ? sLampDrawables[1] : sLampDrawables[0]);
-            binding.lightSwitch1.setSelected(isOn);
+        viewModel.getUrgency().observe(getViewLifecycleOwner(), level -> {
+            // Calcul de la largeur de la jauge
+            float ratio = level / 100f;
+            int maxWidth = toPx(324);
+            float safeRatio = Math.max(0f, Math.min(1f, ratio)); // sécurité pour que le ratio reste entre 0 et 1
+            int calculatedWidth = (int) (maxWidth * safeRatio);
+            int finalWidth = Math.max(1, calculatedWidth);
+
+
+            ViewGroup.LayoutParams params = binding.jaugeGaspillage.getLayoutParams();
+            params.width = finalWidth;
+            binding.jaugeGaspillage.setLayoutParams(params);
         });
 
-        viewModel.getLight2Status().observe(getViewLifecycleOwner(), isOn -> {
-            binding.sLamp2.setImageResource(isOn ? sLampDrawables[1] : sLampDrawables[0]);
-            binding.lightSwitch2.setSelected(isOn);
+        viewModel.getIsGameOver().observe(getViewLifecycleOwner(), gameOver -> {
+            if (gameOver) {
+                binding.messageGaspillage.setText("MERE NATURE EST DEÇUE...");
+                binding.messageGaspillageDouble.setText("MERE NATURE EST DEÇUE...");
+                binding.messageGaspillage.setTextColor(Color.RED);
+
+                // Optionnel : Afficher un écran de fin ou arrêter les clics
+                binding.getRoot().setAlpha(0.8f); // Effet visuel
+                view.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
+            }
         });
 
-        viewModel.getLight3Status().observe(getViewLifecycleOwner(), isOn -> {
-            binding.lLamp.setImageResource(isOn ?  lLampDrawables[1] : lLampDrawables[0]);
-            binding.lightSwitch3.setSelected(isOn);
+
+        viewModel.getProblemsUpdate().observe(getViewLifecycleOwner(), problems -> {
+            for (ImageView image : problemViews) {
+                String id = (String) image.getTag();
+                if (id == null) continue;
+
+                for (EcoProblem p : problems) {
+                    if (p.getId().equals(id)) {
+                        image.setImageResource(p.isActive() ? p.getActiveDrawable() : p.getInactiveDrawable());
+                        syncViewState(p);
+                        break;
+                    }
+                }
+            }
         });
 
-        viewModel.getIsFireplaceOn().observe(getViewLifecycleOwner(), isOn -> {
-            binding.cheminee.setImageResource(isOn ? chemineeDrawables[1] : chemineeDrawables[0] );
-
-            int colorFrom = isOn ? Color.parseColor("#7D6812") : Color.parseColor("#ED5C5F");
-            int colorTo = isOn ? Color.parseColor("#ED5C5F") : Color.parseColor("#7D6812");
-
-            ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-            colorAnimation.setDuration(200);
-
-            colorAnimation.addUpdateListener(animator -> {
-                binding.thermoJauge.setBackgroundColor((int) animator.getAnimatedValue());
-            });
-
-            colorAnimation.start();
+        binding.playButton.setOnClickListener(v -> {
+            binding.tutorialScreen.setVisibility(0);
         });
 
-        viewModel.getBathState().observe(getViewLifecycleOwner(), state -> {
-            binding.bath.setImageResource(bathDrawables[state]);
-        });
+        binding.lightSwitch1.setOnClickListener(v -> viewModel.updateProblemInput(SMALL_LIGHT_1));
+        binding.lightSwitch2.setOnClickListener(v -> viewModel.updateProblemInput(SMALL_LIGHT_2));
+        binding.lightSwitch3.setOnClickListener(v -> viewModel.updateProblemInput(LARGE_LIGHT));
 
-        viewModel.getKitchenSiphonState().observe(getViewLifecycleOwner() , state -> {
-            binding.kitchenFaucet.setImageResource(kitchenFaucetDrawables[state]);
-        });
+        setupRobinetTouchListener(binding.robinetBath, FAUCET_BATH);
+        setupRobinetTouchListener(binding.robinetCuisine, FAUCET_KITCHEN);
+        setupRobinetTouchListener(binding.robinetSalleDeBain, FAUCET_SDB);
 
-        viewModel.getsdbSiphonState().observe(getViewLifecycleOwner() , state -> {
-            binding.faucetSdb.setImageResource(sdbFaucetDrawables[state]);
-        });
+        setupHandTouchListener();
+        setupTempTouchListener();
+    }
 
-        viewModel.getStoveState().observe(getViewLifecycleOwner() , state-> {
-            binding.stove.setImageResource(stoveDrawables[state]);
-        });
-
-        viewModel.getFridgeState().observe(getViewLifecycleOwner() , state-> {
-            binding.fridge.setImageResource(fridgeDrawables[state]);
-        });
-
-        binding.playButton.setOnClickListener(v -> viewModel.startGame());
-
-        binding.lightSwitch1.setOnClickListener(v -> viewModel.toggleLight(1));
-        binding.lightSwitch2.setOnClickListener(v -> viewModel.toggleLight(2));
-        binding.lightSwitch3.setOnClickListener(v -> viewModel.toggleLight(3));
-
-        setupRobinetTouchListener(binding.robinetBath , GameViewModel.FaucetType.BATH);
-        setupRobinetTouchListener(binding.robinetCuisine, GameViewModel.FaucetType.CUISINE);
-        setupRobinetTouchListener(binding.robinetSalleDeBain, GameViewModel.FaucetType.SDB);
-        setupHandTouchListener() ;
-        setupTempTouchListener() ;
+    private void initProblemViews() {
+        problemViews = Arrays.asList(
+                binding.kitchenFaucet,
+                binding.faucetSdb,
+                binding.bath,
+                binding.sLamp1,
+                binding.sLamp2,
+                binding.lLamp,
+                binding.stove,
+                binding.fridge,
+                binding.cheminee
+        );
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void setupRobinetTouchListener(ImageView faucet, GameViewModel.FaucetType type) {
+    private void setupRobinetTouchListener(ImageView faucet, String type) {
         faucet.setOnTouchListener(new View.OnTouchListener() {
             // Variables locales : chaque robinet a les siennes
             private float internalRotation = faucet.getRotation();
@@ -207,8 +188,7 @@ public class GameFragment extends Fragment {
                             lastAngle = currentAngle;
 
                             // Mise à jour du ViewModel
-                            viewModel.updateValvePosition(type, internalRotation);
-                            binding.angletest.setText(String.format("%.1f°", internalRotation));
+                            viewModel.updateProblemInput(type, internalRotation);
                         }
                         break;
 
@@ -222,7 +202,7 @@ public class GameFragment extends Fragment {
                                 .setInterpolator(new OvershootInterpolator(1.5f))
                                 .start();
 
-                        viewModel.updateValvePosition(type, internalRotation);
+                        viewModel.updateProblemInput(type, internalRotation);
                         break;
                 }
                 return true;
@@ -231,14 +211,14 @@ public class GameFragment extends Fragment {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void setupHandTouchListener(){
+    private void setupHandTouchListener() {
         binding.handGrab.setOnTouchListener(new View.OnTouchListener() {
             float dX, dY; // le deplacement
             float startX, startY; // les coordonnées de depart pour y retourner
 
             @Override
-            public boolean onTouch(View view , MotionEvent event){
-                switch(event.getAction()){
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         // initialisation des positions initiales
                         startX = view.getX();
@@ -253,67 +233,82 @@ public class GameFragment extends Fragment {
                         float newY = event.getRawY() + dY;
                         view.setX(newX);
                         view.setY(newY);
-                        if (isViewOverlapping(binding.handGrab, binding.four) || isViewOverlapping(binding.handGrab, binding.fridge) ) {
-                            binding.handGrab.setImageResource(R.drawable.hand_active) ;
+                        if (isViewOverlapping(binding.handGrab, binding.four) || isViewOverlapping(binding.handGrab, binding.fridge)) {
+                            binding.handGrab.setImageResource(R.drawable.hand_active);
                         } else {
                             binding.handGrab.setActivated(false);
-                            binding.handGrab.setImageResource(R.drawable.hand_default) ;
+                            binding.handGrab.setImageResource(R.drawable.hand_default);
                         }
                         break;
                     case MotionEvent.ACTION_UP:
                         if (isViewOverlapping(binding.handGrab, binding.four)) {
                             // ACTION REUSSIE
-                            viewModel.handleFour();
-                        }else if(isViewOverlapping(binding.handGrab, binding.fridge)){
-                            viewModel.handleFridge() ;
-                    }
-                        binding.handGrab.setImageResource(R.drawable.hand_default) ;
+                            viewModel.updateProblemInput(STOVE);
+                        } else if (isViewOverlapping(binding.handGrab, binding.fridge)) {
+                            viewModel.updateProblemInput(FRIDGE);
+                        }
+                        binding.handGrab.setImageResource(R.drawable.hand_default);
                         view.animate().x(startX).y(startY).start();
                         break;
                 }
-                return true ;
+                return true;
             }
-        }) ;
+        });
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private void setupTempTouchListener() {
         View handle = binding.thermoHandle;
-        View jauge = binding.thermoJauge ;
-        int maxHeight = toPx(125);
+        View jauge = binding.thermoJauge;
+        int maxHeight = toPx(150);
         handle.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    // Calcul de la position du doigt sur l'écran
-                    float rawY = event.getRawY();
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        break;
 
-                    // Trouver la position du bas de la jauge sur l'écran
-                    int[] location = new int[2];
-                    jauge.getLocationOnScreen(location);
-                    int jaugeBottomY = location[1] + jauge.getHeight();
+                    case MotionEvent.ACTION_MOVE:
+                        // Calcul de la position du doigt sur l'écran
+                        float rawY = event.getRawY();
 
-                    // Calculer la nouvelle hauteur
-                    int newHeight = jaugeBottomY - (int) rawY;
+                        // Trouver la position du bas de la jauge sur l'écran
+                        int[] location = new int[2];
+                        jauge.getLocationOnScreen(location);
+                        int jaugeBottomY = location[1] + jauge.getHeight();
 
-                    // Application des limites
-                    if (newHeight < toPx(10)) newHeight = toPx(10);
-                    if (newHeight > toPx(125)) newHeight = toPx(125);
+                        // Calculer la nouvelle hauteur
+                        int newHeight = jaugeBottomY - (int) rawY;
 
-                    // Mise à jour de la hauteur dans le layout
-                    ViewGroup.LayoutParams params = jauge.getLayoutParams();
-                    params.height = newHeight;
-                    jauge.setLayoutParams(params);
+                        // Application des limites
+                        if (newHeight < toPx(10)) newHeight = toPx(10);
+                        if (newHeight > toPx(125)) newHeight = toPx(125);
 
-                    viewModel.updateTemperature(newHeight, maxHeight);
-                    boolean isAboveHalf = newHeight > (maxHeight / 2);
-                    Boolean currentState = viewModel.getIsFireplaceOn().getValue();
+                        // Mise à jour de la hauteur dans le layout
+                        ViewGroup.LayoutParams params = jauge.getLayoutParams();
+                        params.height = newHeight;
+                        jauge.setLayoutParams(params);
+                        viewModel.updateProblemInput(FIREPLACE, newHeight, maxHeight);
 
-                    if (currentState != null && isAboveHalf != currentState) {
-                        v.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY);
-                    }
+                        boolean isAboveHalf = newHeight > (maxHeight / 2);
+                        int color = isAboveHalf ? Color.parseColor("#ED5C5F") : Color.parseColor("#7D6812");
+                        jauge.setBackgroundColor(color);
+                        EcoProblem fireplace = viewModel.getProblemById(FIREPLACE);
+
+                        if (fireplace != null) {
+                            boolean isCurrentlyActive = fireplace.isActive();
+
+                            if (isAboveHalf != isCurrentlyActive) {
+                                viewModel.updateProblemInput(FIREPLACE, newHeight, maxHeight);
+
+                                v.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY);
+                            }
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        break;
                 }
-                return true; // Important pour continuer à recevoir les événements de mouvement
+                return true;
             }
         });
     }
@@ -322,6 +317,51 @@ public class GameFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void syncViewState(EcoProblem p) {
+        String id = p.getId();
+        if (p instanceof FaucetProblem) {
+            float targetRotation = p.isActive() ? 0f : -90f; // 0° = Ouvert, -90° = Fermé
+            View faucet = null;
+            switch (p.getId()) {
+                case FAUCET_BATH:
+                    faucet = binding.robinetBath ;
+                    break;
+                case FAUCET_KITCHEN:
+                    faucet = binding.robinetCuisine ;
+                    break;
+                case FAUCET_SDB:
+                    faucet = binding.robinetSalleDeBain ;
+                    break;
+            }
+            if(faucet != null){
+                if (Math.abs(faucet.getRotation() - targetRotation) > 5f) {
+                    faucet.animate().rotation(targetRotation).setDuration(400).start();
+                }
+            }
+        } else if (id.equals(FIREPLACE)) {
+            int targetHeight = p.isActive() ? toPx(125) : toPx(10);
+            View jauge = binding.thermoJauge;
+
+            if (Math.abs(jauge.getHeight() - targetHeight) > 5) {
+                ValueAnimator anim = ValueAnimator.ofInt(jauge.getHeight(), targetHeight);
+                anim.addUpdateListener(animation -> {
+                    ViewGroup.LayoutParams lp = jauge.getLayoutParams();
+                    lp.height = (int) animation.getAnimatedValue();
+                    jauge.setLayoutParams(lp);
+
+                    jauge.setBackgroundColor(p.isActive() ? Color.parseColor("#ED5C5F") : Color.parseColor("#7D6812"));
+                });
+                anim.setDuration(400).start();
+            }
+        } else if (id.equals(SMALL_LIGHT_1)) {
+            binding.lightSwitch1.setImageResource(p.isActive() ? R.drawable.switch_on : R.drawable.switch_off);
+        } else if (id.equals(SMALL_LIGHT_2)) {
+            binding.lightSwitch2.setImageResource(p.isActive() ? R.drawable.switch_on : R.drawable.switch_off);
+        } else if (id.equals(LARGE_LIGHT)) {
+            binding.lightSwitch3.setImageResource(p.isActive() ? R.drawable.switch_on : R.drawable.switch_off);
+        }
     }
 
     private boolean isViewOverlapping(View hand, View element) {
@@ -345,6 +385,7 @@ public class GameFragment extends Fragment {
         return (int) (dp * getResources().getDisplayMetrics().density);
     }
 
+
     public void updateAlertBarDisplay(Integer badPoints) {
         View rectangleView = binding.jaugeGaspillage;
         int parentWidth = ((View) rectangleView.getParent()).getWidth();
@@ -355,28 +396,11 @@ public class GameFragment extends Fragment {
         params.width = (int) (badPoints * getResources().getDisplayMetrics().density);
         if (badPoints < 2) {
             params.width = (int) (1 * getResources().getDisplayMetrics().density);
-        }
-        else if (badPoints> 323) {
+        } else if (badPoints > 323) {
             params.width = (int) (324 * getResources().getDisplayMetrics().density);
 
         }
         params.height = 20;
         rectangleView.setLayoutParams(params);
     }
-    /* pour la cheminee à ajuster
-    private void toggleLight() {
-        isLightOn = !isLightOn;
-        if (isLightOn) {
-            binding.lightOverlay.setVisibility(View.VISIBLE); // style.visibility = 'hidden'
-            binding.lightSwitch.setSelected(true);
-            binding.lightOverlay.setImageResource(R.drawable.livingroom_1);
-        } else {
-            // Allumer
-            binding.lightOverlay.setVisibility(View.INVISIBLE); // style.visibility = 'visible'
-            binding.lightSwitch.setSelected(false);
-            binding.lightOverlay.setImageResource(R.drawable.livingroom_0);
-
-        }
-    }
-     */
 }

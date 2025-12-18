@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="124dp" />
+        app:layout_constraintGuide_end="594dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/col_3"
@@ -86,7 +86,7 @@
 
     <View
         android:id="@+id/jauge_gaspillage"
-        android:layout_width="324dp"
+        android:layout_width="1dp"
         android:layout_height="16dp"
         android:layout_marginStart="12dp"
         android:background="#ED5C5F"
@@ -132,7 +132,7 @@
     <View
         android:id="@+id/thermo_jauge"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="10dp"
         android:background="#7D6812"
         app:layout_constraintBottom_toBottomOf="@id/thermo"
         app:layout_constraintStart_toStartOf="@id/thermo"
@@ -148,6 +148,17 @@
         app:layout_constraintStart_toStartOf="@id/thermo_jauge"
         app:layout_constraintEnd_toEndOf="@id/thermo_jauge"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:fontFamily="@font/yoster_island"
+        android:text="Lampe de chevet 1"
+        android:textColor="#282727"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@id/light_switch_1"
+        app:layout_constraintEnd_toEndOf="@id/switch_col"
+        app:layout_constraintStart_toStartOf="@id/switch_col" />
 
     <com.example.ecohouse.components.PixelImageView
         android:id="@+id/light_switch_1"
@@ -163,6 +174,19 @@
         app:layout_constraintBottom_toTopOf="@+id/light_switch_2"
         app:layout_constraintVertical_chainStyle="packed" />
 
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:fontFamily="@font/yoster_island"
+        android:text="Lampe de chevet 2"
+        android:textColor="#282727"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@id/light_switch_2"
+        app:layout_constraintEnd_toEndOf="@id/switch_col"
+        app:layout_constraintStart_toStartOf="@id/switch_col" />
+
     <ImageButton
         android:id="@+id/light_switch_2"
         android:layout_width="42dp"
@@ -176,6 +200,19 @@
         app:layout_constraintEnd_toEndOf="@id/switch_col"
         app:layout_constraintTop_toBottomOf="@+id/light_switch_1"
         app:layout_constraintBottom_toTopOf="@+id/light_switch_3" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:fontFamily="@font/yoster_island"
+        android:text="Lampe à pieds"
+        android:textColor="#282727"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@id/light_switch_3"
+        app:layout_constraintEnd_toEndOf="@id/switch_col"
+        app:layout_constraintStart_toStartOf="@id/switch_col" />
+
 
     <ImageButton
         android:id="@+id/light_switch_3"
@@ -191,24 +228,21 @@
         app:layout_constraintTop_toBottomOf="@+id/light_switch_2"
         app:layout_constraintBottom_toBottomOf="parent" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-15dp"
+        android:fontFamily="@font/yoster_island"
+        android:text="Baignoire"
+        android:textColor="#282727"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@id/robinet_bath"
+        app:layout_constraintEnd_toEndOf="@id/col_3"
+        app:layout_constraintStart_toStartOf="@id/col_3" />
+
     <com.example.ecohouse.components.PixelImageView
         android:id="@+id/robinet_bath"
-        android:padding="20dp"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/faucet" />
-
-    <com.example.ecohouse.components.PixelImageView
-        android:id="@+id/robinet_cuisine"
-        android:padding="20dp"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/faucet" />
-
-    <com.example.ecohouse.components.PixelImageView
-        android:id="@+id/robinet_salle_de_bain"
+        android:rotation="-90"
         android:padding="20dp"
         android:layout_width="130dp"
         android:layout_height="130dp"
@@ -216,14 +250,46 @@
         android:src="@drawable/faucet" />
 
     <TextView
-        android:id="@+id/angletest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-    android:text="test"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:textSize="30sp"
-        android:textColor="#000"/>
+        android:layout_marginBottom="-15dp"
+        android:fontFamily="@font/yoster_island"
+        android:text="Cuisine"
+        android:textColor="#282727"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@id/robinet_cuisine"
+        app:layout_constraintEnd_toEndOf="@id/col_3"
+        app:layout_constraintStart_toStartOf="@id/col_3" />
+
+    <com.example.ecohouse.components.PixelImageView
+        android:id="@+id/robinet_cuisine"
+        android:rotation="-90"
+        android:padding="20dp"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/faucet" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-15dp"
+        android:fontFamily="@font/yoster_island"
+        android:text="Salle de bain"
+        android:textColor="#282727"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@id/robinet_salle_de_bain"
+        app:layout_constraintEnd_toEndOf="@id/col_3"
+        app:layout_constraintStart_toStartOf="@id/col_3" />
+
+    <com.example.ecohouse.components.PixelImageView
+        android:id="@+id/robinet_salle_de_bain"
+        android:rotation="-90"
+        android:padding="20dp"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/faucet" />
 
 
     <FrameLayout
@@ -245,6 +311,7 @@
 
         <com.example.ecohouse.components.PixelImageView
             android:id="@+id/cheminee"
+            android:tag="fireplace"
             android:layout_width="40dp"
             android:layout_height="38dp"
             android:layout_gravity="bottom|end"
@@ -255,6 +322,7 @@
 
         <com.example.ecohouse.components.PixelImageView
             android:id="@+id/bath"
+            android:tag="faucet_bath"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|top"
@@ -265,6 +333,7 @@
 
         <com.example.ecohouse.components.PixelImageView
             android:id="@+id/faucet_sdb"
+            android:tag="faucet_sdb"
             android:layout_width="21dp"
             android:layout_height="32dp"
             android:layout_gravity="start|top"
@@ -284,6 +353,7 @@
 
             <com.example.ecohouse.components.PixelImageView
                 android:id="@+id/kitchen_faucet"
+                android:tag="faucet_kitchen"
                 android:layout_width="60dp"
                 android:layout_height="42dp"
                 android:layout_gravity="top|left"
@@ -294,6 +364,7 @@
 
             <com.example.ecohouse.components.PixelImageView
                 android:id="@+id/stove"
+                android:tag="stove"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|left"
@@ -305,6 +376,7 @@
 
             <com.example.ecohouse.components.PixelImageView
                 android:id="@+id/fridge"
+                android:tag="fridge"
                 android:layout_marginTop="43dp"
                 android:layout_marginRight="1dp"
                 android:layout_gravity="top|right"
@@ -323,6 +395,7 @@
 
         <com.example.ecohouse.components.PixelImageView
             android:id="@+id/s_lamp_1"
+            android:tag="small_light_1"
             android:layout_width="21dp"
             android:layout_height="32dp"
             android:layout_gravity="end|top"
@@ -333,6 +406,7 @@
 
         <com.example.ecohouse.components.PixelImageView
             android:id="@+id/s_lamp_2"
+            android:tag="small_light_2"
             android:layout_width="21dp"
             android:layout_height="32dp"
             android:layout_gravity="end|top"
@@ -343,6 +417,7 @@
 
         <com.example.ecohouse.components.PixelImageView
             android:id="@+id/l_lamp"
+            android:tag="large_light"
             android:layout_width="22dp"
             android:layout_height="71dp"
             android:layout_gravity="end|top"
