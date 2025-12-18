@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:drawable="@drawable/button_pressed" />
-    <item android:state_focused="true" android:drawable="@drawable/button_pressed"  />
-    <item android:drawable="@drawable/button_default" />
+
+    <item android:state_pressed="true">
+        <bitmap
+            android:src="@drawable/button_pressed"
+            android:filter="false" />
+    </item>
+
+    <item android:state_focused="true">
+        <bitmap
+            android:src="@drawable/button_pressed"
+            android:filter="false" />
+    </item>
+
+    <item>
+        <bitmap
+            android:src="@drawable/button_default"
+            android:filter="false" />
+    </item>
+
 </selector>

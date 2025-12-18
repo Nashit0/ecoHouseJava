@@ -1,8 +1,9 @@
 package com.example.ecohouse.view;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -210,6 +211,7 @@ public class GameFragment extends Fragment {
         }) ;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void setupTempTouchListener() {
         View handle = binding.thermoHandle;
         View jauge = binding.thermoJauge ;
@@ -268,6 +270,7 @@ public class GameFragment extends Fragment {
     private int toPx(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density);
     }
+
 
     /* pour la cheminee à ajuster
     private void toggleLight() {

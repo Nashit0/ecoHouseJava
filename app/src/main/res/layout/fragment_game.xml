@@ -59,7 +59,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <TextView
-        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -76,20 +75,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <ImageView
+    <com.example.ecohouse.components.PixelImageView
         app:layout_constraintTop_toBottomOf="@id/message_gaspillage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:id="@+id/jauge_gaspillage_fond"
         android:layout_width="350dp"
         android:layout_height="35dp"
-        android:background="@drawable/jauge_gaspillage"/>
+        android:src="@drawable/jauge_gaspillage"/>
 
     <View
         android:id="@+id/jauge_gaspillage"
-        android:layout_width="332dp"
+        android:layout_width="324dp"
         android:layout_height="16dp"
-        android:layout_marginStart="9dp"
+        android:layout_marginStart="12dp"
         android:background="#ED5C5F"
         app:layout_constraintBottom_toBottomOf="@id/jauge_gaspillage_fond"
         app:layout_constraintStart_toStartOf="@id/jauge_gaspillage_fond"
@@ -119,7 +118,7 @@
         app:layout_constraintEnd_toEndOf="@id/thermo"
         android:layout_margin="5dp" />
 
-    <ImageView
+    <com.example.ecohouse.components.PixelImageView
         android:id="@+id/thermo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -140,7 +139,7 @@
         app:layout_constraintEnd_toEndOf="@id/thermo"
         android:layout_margin="7.5dp" />
 
-    <ImageView
+    <com.example.ecohouse.components.PixelImageView
         android:id="@+id/thermo_handle"
         android:layout_width="30dp"
         android:layout_height="30dp"
@@ -150,7 +149,7 @@
         app:layout_constraintEnd_toEndOf="@id/thermo_jauge"/>
 
 
-    <ImageButton
+    <com.example.ecohouse.components.PixelImageView
         android:id="@+id/light_switch_1"
         android:layout_width="42dp"
         android:layout_height="85dp"
@@ -192,7 +191,7 @@
         app:layout_constraintTop_toBottomOf="@+id/light_switch_2"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <ImageView
+    <com.example.ecohouse.components.PixelImageView
         android:id="@+id/robinet_bath"
         android:padding="20dp"
         android:layout_width="130dp"
@@ -200,7 +199,7 @@
         android:scaleType="fitCenter"
         android:src="@drawable/faucet" />
 
-    <ImageView
+    <com.example.ecohouse.components.PixelImageView
         android:id="@+id/robinet_cuisine"
         android:padding="20dp"
         android:layout_width="130dp"
@@ -208,7 +207,7 @@
         android:scaleType="fitCenter"
         android:src="@drawable/faucet" />
 
-    <ImageView
+    <com.example.ecohouse.components.PixelImageView
         android:id="@+id/robinet_salle_de_bain"
         android:padding="20dp"
         android:layout_width="130dp"
@@ -236,7 +235,7 @@
         android:layout_marginBottom="20dp"
         >
 
-        <ImageView
+        <com.example.ecohouse.components.PixelImageView
             android:id="@+id/house"
             android:layout_width="350dp"
             android:layout_height="330dp"
@@ -244,7 +243,7 @@
             android:scaleType="fitCenter"
             android:src="@drawable/house_bg" />
 
-        <ImageView
+        <com.example.ecohouse.components.PixelImageView
             android:id="@+id/bath"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -263,7 +262,7 @@
             android:layout_marginLeft="6dp"
             android:layout_marginBottom="5dp">
 
-            <ImageView
+            <com.example.ecohouse.components.PixelImageView
                 android:id="@+id/stove"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -274,7 +273,7 @@
 
                 />
 
-            <ImageView
+            <com.example.ecohouse.components.PixelImageView
                 android:id="@+id/fridge"
                 android:layout_marginTop="43dp"
                 android:layout_marginRight="1dp"
@@ -293,7 +292,7 @@
         </FrameLayout>
 
 
-        <ImageView
+        <com.example.ecohouse.components.PixelImageView
             android:contentDescription="chambre"
             android:id="@+id/light_overlay"
             android:layout_width="196dp"
@@ -305,7 +304,7 @@
             android:src="@drawable/bedroom_0" />
 
 
-        <ImageView
+        <com.example.ecohouse.components.PixelImageView
             android:contentDescription="salon"
             android:id="@+id/cheminee_overlay"
             android:layout_width="196dp"
@@ -317,7 +316,7 @@
             android:src="@drawable/livingroom_0" />
     </FrameLayout>
 
-    <ImageView
+    <com.example.ecohouse.components.PixelImageView
         android:id="@+id/handGrab"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -327,6 +326,7 @@
         app:layout_constraintEnd_toEndOf="@+id/col_1"
         app:layout_constraintStart_toStartOf="@id/col_1"
         app:layout_constraintTop_toBottomOf="@+id/thermo" />
+
 
     <LinearLayout
         android:visibility="gone"
@@ -342,6 +342,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/background_info"
         >
+
 
         <TextView
             android:layout_width="wrap_content"
