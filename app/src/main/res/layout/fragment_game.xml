@@ -249,9 +249,19 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start|top"
             android:src="@drawable/bath_0"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="83dp"
             android:layout_marginStart="8dp"
             />
+
+        <com.example.ecohouse.components.PixelImageView
+            android:id="@+id/faucet_sdb"
+            android:layout_width="21dp"
+            android:layout_height="32dp"
+            android:layout_gravity="start|top"
+            android:layout_marginStart="70dp"
+            android:layout_marginTop="77dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/faucet_sdb_0" />
 
 
         <FrameLayout
@@ -261,6 +271,16 @@
             android:layout_gravity="bottom|left"
             android:layout_marginLeft="6dp"
             android:layout_marginBottom="5dp">
+
+            <com.example.ecohouse.components.PixelImageView
+                android:id="@+id/kitchen_faucet"
+                android:layout_width="60dp"
+                android:layout_height="42dp"
+                android:layout_gravity="top|left"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="54dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/faucet_kitchen_0" />
 
             <com.example.ecohouse.components.PixelImageView
                 android:id="@+id/stove"
@@ -291,17 +311,35 @@
                 android:layout_marginTop="50dp" />
         </FrameLayout>
 
+        <com.example.ecohouse.components.PixelImageView
+            android:id="@+id/s_lamp_1"
+            android:layout_width="21dp"
+            android:layout_height="32dp"
+            android:layout_gravity="end|top"
+            android:layout_marginEnd="180dp"
+            android:layout_marginTop="128dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/little_lamp_0" />
 
         <com.example.ecohouse.components.PixelImageView
-            android:contentDescription="chambre"
-            android:id="@+id/light_overlay"
-            android:layout_width="196dp"
-            android:layout_height="158dp"
-            android:layout_gravity="top|end"
-            android:layout_marginTop="6dp"
+            android:id="@+id/s_lamp_2"
+            android:layout_width="21dp"
+            android:layout_height="32dp"
+            android:layout_gravity="end|top"
             android:layout_marginEnd="8dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/bedroom_0" />
+            android:layout_marginTop="95dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/little_lamp_0" />
+
+        <com.example.ecohouse.components.PixelImageView
+            android:id="@+id/l_lamp"
+            android:layout_width="22dp"
+            android:layout_height="71dp"
+            android:layout_gravity="end|top"
+            android:layout_marginTop="44dp"
+            android:layout_marginEnd="75dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/l_lamp_0" />
 
 
         <com.example.ecohouse.components.PixelImageView
@@ -329,6 +367,7 @@
 
 
     <FrameLayout
+        android:visibility="gone"
         android:id="@+id/tutorial_screen"
         android:layout_width="400dp"
         android:layout_height="360dp"

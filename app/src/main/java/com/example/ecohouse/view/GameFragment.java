@@ -33,9 +33,28 @@ public class GameFragment extends Fragment {
             R.drawable.bedroom_3
     };
 
+    private final int[] lLampDrawables = {
+            R.drawable.l_lamp_0,
+            R.drawable.l_lamp_1,
+    };
+
+    private final int[] sLampDrawables = {
+            R.drawable.little_lamp_0,
+            R.drawable.little_lamp_1,
+    };
+
     private final int[] bathDrawables = {
             R.drawable.bath_0,
             R.drawable.bath_1
+    };
+    private final int[] kitchenFaucetDrawables = {
+            R.drawable.faucet_kitchen_0,
+            R.drawable.faucet_kitchen_1
+    };
+
+    private final int[] sdbFaucetDrawables = {
+            R.drawable.faucet_sdb_0,
+            R.drawable.faucet_sdb_1
     };
 
     private final int[] stoveDrawables = {
@@ -69,15 +88,31 @@ public class GameFragment extends Fragment {
             }
         });
 
-        viewModel.getLightLevel().observe(getViewLifecycleOwner(), level -> {
-            binding.lightOverlay.setImageResource(bedroomDrawables[level]);
-            binding.lightSwitch3.setSelected(level <= 2);
-            binding.lightSwitch2.setSelected(level <= 1);
-            binding.lightSwitch1.setSelected(level <= 0);
+        viewModel.getLight1Status().observe(getViewLifecycleOwner(), isOn -> {
+            binding.sLamp1.setImageResource(isOn ? sLampDrawables[1] : sLampDrawables[0]);
+            binding.lightSwitch1.setSelected(isOn);
+        });
+
+        viewModel.getLight2Status().observe(getViewLifecycleOwner(), isOn -> {
+            binding.sLamp2.setImageResource(isOn ? sLampDrawables[1] : sLampDrawables[0]);
+            binding.lightSwitch2.setSelected(isOn);
+        });
+
+        viewModel.getLight3Status().observe(getViewLifecycleOwner(), isOn -> {
+            binding.lLamp.setImageResource(isOn ?  lLampDrawables[1] : lLampDrawables[0]);
+            binding.lightSwitch3.setSelected(isOn);
         });
 
         viewModel.getBathState().observe(getViewLifecycleOwner(), state -> {
             binding.bath.setImageResource(bathDrawables[state]);
+        });
+
+        viewModel.getKitchenSiphonState().observe(getViewLifecycleOwner() , state -> {
+            binding.kitchenFaucet.setImageResource(kitchenFaucetDrawables[state]);
+        });
+
+        viewModel.getsdbSiphonState().observe(getViewLifecycleOwner() , state -> {
+            binding.faucetSdb.setImageResource(sdbFaucetDrawables[state]);
         });
 
         viewModel.getStoveState().observe(getViewLifecycleOwner() , state-> {
@@ -90,9 +125,9 @@ public class GameFragment extends Fragment {
 
         binding.playButton.setOnClickListener(v -> viewModel.startGame());
 
-        binding.lightSwitch3.setOnClickListener(v -> viewModel.processLightSwitch(3));
-        binding.lightSwitch2.setOnClickListener(v -> viewModel.processLightSwitch(2));
-        binding.lightSwitch1.setOnClickListener(v -> viewModel.processLightSwitch(1));
+        binding.lightSwitch1.setOnClickListener(v -> viewModel.toggleLight(1));
+        binding.lightSwitch2.setOnClickListener(v -> viewModel.toggleLight(2));
+        binding.lightSwitch3.setOnClickListener(v -> viewModel.toggleLight(3));
 
         setupRobinetTouchListener(binding.robinetBath , GameViewModel.FaucetType.BATH);
         setupRobinetTouchListener(binding.robinetCuisine, GameViewModel.FaucetType.CUISINE);
@@ -270,23 +305,5 @@ public class GameFragment extends Fragment {
     private int toPx(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density);
     }
-
-
-    /* pour la cheminee à ajuster
-    private void toggleLight() {
-        isLightOn = !isLightOn;
-        if (isLightOn) {
-            binding.lightOverlay.setVisibility(View.VISIBLE); // style.visibility = 'hidden'
-            binding.lightSwitch.setSelected(true);
-            binding.lightOverlay.setImageResource(R.drawable.livingroom_1);
-        } else {
-            // Allumer
-            binding.lightOverlay.setVisibility(View.INVISIBLE); // style.visibility = 'visible'
-            binding.lightSwitch.setSelected(false);
-            binding.lightOverlay.setImageResource(R.drawable.livingroom_0);
-
-        }
-    }
-     */
 
 }

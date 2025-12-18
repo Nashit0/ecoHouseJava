@@ -7,13 +7,19 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class GameViewModel extends ViewModel {
-    private final MutableLiveData<Integer> lightLevel = new MutableLiveData<>(3);
+    private MutableLiveData<Boolean> light1 = new MutableLiveData<>(false);
+    private MutableLiveData<Boolean> light2 = new MutableLiveData<>(false);
+    private MutableLiveData<Boolean> light3 = new MutableLiveData<>(false);
+    public LiveData<Boolean> getLight1Status() { return light1; }
+    public LiveData<Boolean> getLight2Status() { return light2; }
+    public LiveData<Boolean> getLight3Status() { return light3; }
     private final MutableLiveData<Integer> bathState = new MutableLiveData<>(1);
     private final MutableLiveData<Integer> kitchenSiphonState = new MutableLiveData<>(1);
     private final MutableLiveData<Integer> sdbSiphonState = new MutableLiveData<>(1);
     private final MutableLiveData<Integer> StoveState = new MutableLiveData<>(1);
     private final MutableLiveData<Integer> FridgeState = new MutableLiveData<>(1);
     private final MutableLiveData<Boolean> gameStarted = new MutableLiveData<>(false);
+
 
     private final Handler gameHandler = new Handler(); // temps qui s'ecoule
     private Runnable waterWasteRunnable;
@@ -23,7 +29,6 @@ public class GameViewModel extends ViewModel {
     }
 
     // Getters pour le Fragment
-    public LiveData<Integer> getLightLevel() { return lightLevel; }
     public LiveData<Integer> getKitchenSiphonState() { return kitchenSiphonState; }
     public LiveData<Integer> getsdbSiphonState() { return sdbSiphonState; }
     public LiveData<Integer> getBathState() { return bathState; }
@@ -35,10 +40,13 @@ public class GameViewModel extends ViewModel {
         gameStarted.setValue(true);
     }
 
-    public void processLightSwitch(int clickedLevel) {
-        Integer current = lightLevel.getValue();
-        if (current != null && current > 0 && current == clickedLevel) {
-            lightLevel.setValue(current - 1);
+    public void toggleLight(int switchNumber) {
+        if (switchNumber == 1) {
+            light1.setValue(!light1.getValue());
+        } else if (switchNumber == 2) {
+            light2.setValue(!light2.getValue());
+        } else if (switchNumber == 3) {
+            light3.setValue(!light3.getValue());
         }
     }
 
